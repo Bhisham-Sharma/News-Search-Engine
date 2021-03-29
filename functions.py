@@ -1,6 +1,6 @@
 import nltk
-nltk.download('stopwords')
-nltk.download('framenet_v17')
+#nltk.download('stopwords')
+#nltk.download('framenet_v17')
 from nltk.stem import SnowballStemmer
 import re
 from nltk.corpus import stopwords
