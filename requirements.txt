@@ -34,4 +34,3 @@ typed_ast == 1.4.2
 Werkzeug == 1.0.1
 wheel == 0.36.2
 wrapt == 1.12.1
-WTForm == 2.3.3
