@@ -25,7 +25,6 @@ rake_nltk == 1.0.4
 rank_bm25 == 0.2.1
 regex == 2021.3.17
 setuptools == 54.1.2
-slipa_common == 0.3
 six == 1.15.0
 soundex == 1.1.3
 spellchecker == 0.4
