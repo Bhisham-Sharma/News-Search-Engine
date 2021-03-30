@@ -1,10 +1,29 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 body{
     background: white;
+    padding: 0;
 }
 
 h1, h6{
     margin:0;
     padding:0;
+}
+
+.search-button:hover {
+  cursor: pointer;
+}
+
+.search-button:active {
+  box-shadow: 0 1px whitesmoke;
+  transform: translateY(2px);
+}
+
+.site-search:hover{
+  box-shadow: 0 1px whitesmoke;
 }
 
 .card {
