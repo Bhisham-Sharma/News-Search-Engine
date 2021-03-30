@@ -77,8 +77,8 @@ def autocomplete():
     return jsonify(list(result)[:10])'''
     
 
-
 if __name__ == '__main__':
+    app.run(debug=True)
 
    ''' # save json file to csv
     file = pathlib.Path("./data/news_data.csv")
@@ -166,5 +166,3 @@ if __name__ == '__main__':
         outfile = open(filename,'wb')
         pickle.dump(all_phrases,outfile)
         outfile.close()'''
-
-    app.run(debug=True)
