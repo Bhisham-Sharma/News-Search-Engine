@@ -18,7 +18,7 @@ app = Flask(__name__)
 def main_page():
     return render_template("index.html")
 
-'''@app.route('/process', methods=["POST"])
+@app.route('/process', methods=["POST"])
 def process():
     
     search_query = request.form.get("data")
@@ -74,13 +74,12 @@ def autocomplete():
         for line in element:
             if line.startswith(search):
                 result.add(line)
-    return jsonify(list(result)[:10])'''
+    return jsonify(list(result)[:10])
     
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-   ''' # save json file to csv
+    
+    # save json file to csv
     file = pathlib.Path("./data/news_data.csv")
     if file.exists() == False:
         df = pd.read_json("./data/News_Category_Dataset_v2.json",lines=True)
@@ -165,4 +164,6 @@ if __name__ == '__main__':
         filename = "./data/suggestion_list.pkl"
         outfile = open(filename,'wb')
         pickle.dump(all_phrases,outfile)
-        outfile.close()'''
+        outfile.close()
+    
+    app.run(debug=True)
