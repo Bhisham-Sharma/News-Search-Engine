@@ -19,20 +19,20 @@
 <body>
     <div name="full-container" id="full-container" style="background-color: blueviolet;">
 
-        <h1 style="text-align:center; font-size:200%; font-family:courier;">HUFFINGTON POST NEWS</h1>
-        <h6 style="text-align:center; font-size:100%; font-family:courier;">American News Database (2001-2019)</h6>
+        <h1 style="color:yellow; text-align:center; font-size:200%; font-family:courier;">HUFFINGTON POST NEWS</h1>
+        <h6 style="color: whitesmoke; text-align:center; font-size:100%; font-family:courier;">American News Database (2001-2019)</h6>
 
         <div class="ui-widget"
             style="margin-top: 5vh; justify-content: center; align-items:center; height:6vh; display: flex;">
-            <input style="width:30%; height:6vh; font-size:14pt;" type="text" id="site-search" name="site-search">
+            <input style="outline:none; width:30%; height:6vh; font-size:14pt; border-radius: 25px; padding-left: 10px; border-color: blueviolet;" type="text" id="site-search" placeholder="Search News..." name="site-search" class="site-search">
 
-            <button type="button" style="height:6vh; margin-left: 1vh; color:whitesmoke; background-color: darkcyan;" id="search-button">Search</button>
+            <button class="search-button" type="button" style="outline:none; width: 7%; height:6vh; margin-left: 1vh; color:whitesmoke; border: solid whitesmoke; border-radius: 25px; padding:0 10px; background: transparent;" id="search-button">Search</button>
         </div>
 
         <div style="margin-top: 5vh; justify-content: center; align-items:center; height:6vh; display: flex;">
 
-            <label for="sort-by">Sort By: </label>
-            <select name="sort-by" id="sort-by">
+            <label style="color: whitesmoke;" for="sort-by">Sort By: </label>
+            <select  name="sort-by" id="sort-by">
                 <option value="Relevance" selected>Relevance</option>
                 <option value="Newest">Newest</option>
                 <option value="Oldest">Oldest</option>
@@ -40,7 +40,7 @@
 
             <div style="width: 10%;"></div>
 
-            <label for="news-category">Categories: </label>
+            <label style="color: whitesmoke;" for="news-category">Categories: </label>
             <select name="news-category" id="news-category">
                 <option value="ALL" selected>ALL</option>
                 <option value="ARTS">ARTS</option>
@@ -140,7 +140,7 @@
                     var output = '';
 
                     for (i = 0; i < len; i++) {
-                        output += "<div class='card'><h1>"+res[i][0]+"</h1><div class='container'><h4><b>"+res[i][2]+"</b></h4><div style='display:flex; width:100%'><div style='text-align:left; width:50%;'><a href="+res[i][1]+">Go to the news</a></div><div style='text-align:right; width:50%;'><a>"+res[i][3]+"</a></div></div></div></div><br>";
+                        output += "<div class='card'><h2>"+res[i][0]+"</h2><div class='container'><h4><b>"+res[i][2]+"</b></h4><div style='display:flex; width:100%'><div style='text-align:left; width:50%;'><a href="+res[i][1]+">Go to the news</a></div><div style='text-align:right; width:50%;'><a>"+res[i][3]+"</a></div></div></div></div><br>";
                     }
 
                     $("#response").html(output);
