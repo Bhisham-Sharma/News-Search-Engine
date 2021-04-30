@@ -21,9 +21,11 @@ def main_page():
 @app.route('/process', methods=["POST"])
 def process():
     
-    search_query = request.form.get("data")
+    query = request.form.get("data")
     selected_category = request.form.get("category").lower()
     selected_sort = request.form.get("sort")
+
+    search_query = f.spellCheck(query)
     
     df = pd.read_csv("./data/news_data.csv")
 
@@ -37,48 +39,58 @@ def process():
         category_index_dict = pickle.load(file)
         doc_set = f.linearMergePosition(search_query, category_index_dict[selected_category])
 
-
-    result_df = df.loc[df['Doc_ID'].isin([doc_id for doc_id in doc_set])].copy()
+    if doc_set != None:
+        result_df = df.loc[df['Doc_ID'].isin([doc_id for doc_id in doc_set])].copy()
     
-    df_ = pd.read_csv("./data/full_data_and_cleaned_data.csv")
+        df_ = pd.read_csv("./data/full_data_and_cleaned_data.csv")
 
-    tokenized_corpus = [df_['cleaned_data'][doc_id-1].split(" ") for doc_id in doc_set]
-    bm25 = BM25Okapi(tokenized_corpus)
-    tokenized_query = f.preprocess_words(search_query).split(" ")
-    doc_scores = bm25.get_scores(tokenized_query)
+        tokenized_corpus = [df_['cleaned_data'][doc_id-1].split(" ") for doc_id in doc_set]
+        bm25 = BM25Okapi(tokenized_corpus)
+        tokenized_query = f.preprocess_words(search_query).split(" ")
+        doc_scores = bm25.get_scores(tokenized_query)
 
-    result_df["Scores"] = doc_scores
-    result_df.dropna(inplace=True)
+        result_df["Scores"] = doc_scores
+        #result_df.dropna(inplace=True)
 
-    if selected_sort == "Relevance":
-        result_df.sort_values('Scores', inplace=True, ascending=False)
-    elif selected_sort == "Newest":
-        result_df['Date'] =pd.to_datetime(result_df.date, yearfirst=True)
-        result_df.sort_values('Date', inplace=True, ascending=False)
+        if selected_sort == "Relevance":
+            result_df.sort_values('Scores', inplace=True, ascending=False)
+        elif selected_sort == "Newest":
+            result_df['Date'] =pd.to_datetime(result_df.date, yearfirst=True)
+            result_df.sort_values('Date', inplace=True, ascending=False)
+        else:
+            result_df['Date'] =pd.to_datetime(result_df.date, yearfirst=True)
+            result_df.sort_values('Date', inplace=True, ascending=True)
+
+        all_links = []
+
+        all_links.append([search_query, query, '0', '0'])
+
+        for headline, link, description, date in zip(result_df['headline'].values, result_df['link'].values, result_df['short_description'].values, result_df['date'].values):
+            all_links.append([headline, link, str(description), date])
+        return jsonify(all_links)
     else:
-        result_df['Date'] =pd.to_datetime(result_df.date, yearfirst=True)
-        result_df.sort_values('Date', inplace=True, ascending=True)
-
-    all_links = []
-    for headline, link, description, date in zip(result_df['headline'].values, result_df['link'].values, result_df['short_description'].values, result_df['date'].values):
-        all_links.append([headline, link, str(description), date])
-    return jsonify(all_links)
+        all_links = []
+        all_links.append([search_query, query, '0', '0'])
+        return jsonify(all_links)
     
 @app.route('/autocomplete', methods=["POST"])
 def autocomplete():
     search = request.form.get("text")
     file = open("./data/suggestion_list.pkl", "rb")
     l = pickle.load(file)
+    
     result = set()
-    for element in l:
-        for line in element:
-            if line.startswith(search):
+    
+    if len(search.split(" ")) >= 1:
+        for line in l:
+            if search in line:
                 result.add(line)
-    return jsonify(list(result)[:10])
+        return jsonify(list(result)[:10])
     
 
+
 if __name__ == '__main__':
-    
+
     # save json file to csv
     file = pathlib.Path("./data/news_data.csv")
     if file.exists() == False:
@@ -161,9 +173,12 @@ if __name__ == '__main__':
             rake.extract_keywords_from_text(data)
             all_phrases.append(rake.get_ranked_phrases())
 
+        from itertools import chain
+        all_phrases = list(chain.from_iterable(all_phrases))
+
         filename = "./data/suggestion_list.pkl"
         outfile = open(filename,'wb')
         pickle.dump(all_phrases,outfile)
         outfile.close()
-    
+
     app.run(debug=True)
