@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'styles/style.css')}}">
 
@@ -12,6 +12,13 @@
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <style>
+        @font-face {
+            font-family: "proximanovacond";
+            src: url("{{ url_for('static', filename = 'fonts/proximanovacond.otf')}}");
+        }
+    </style>
 
 
 </head>
@@ -61,39 +68,11 @@
         </div>
     </div>
 
-    <!-- 'ARTS' 'ARTS & CULTURE' 'BLACK VOICES' 'BUSINESS' 'COLLEGE' 'COMEDY'
- 'CRIME' 'CULTURE & ARTS' 'DIVORCE' 'EDUCATION' 'ENTERTAINMENT'
- 'ENVIRONMENT' 'FIFTY' 'FOOD & DRINK' 'GOOD NEWS' 'GREEN' 'HEALTHY LIVING'
- 'HOME & LIVING' 'IMPACT' 'LATINO VOICES' 'MEDIA' 'MONEY' 'PARENTING'
- 'PARENTS' 'POLITICS' 'QUEER VOICES' 'RELIGION' 'SCIENCE' 'SPORTS' 'STYLE'
- 'STYLE & BEAUTY' 'TASTE' 'TECH' 'THE WORLDPOST' 'TRAVEL' 'WEDDINGS'
- 'WEIRD NEWS' 'WELLNESS' 'WOMEN' 'WORLD NEWS' 'WORLDPOST' -->
+    <div id="show-query" style="margin-top: 2vh; width: auto;"></div>
 
-
-    <!--<select name="news" id="news">
-            <option value="value1">One</option>
-            <option value="value2" selected>Two</option>
-            <option value="value3">Three</option>
-        </select>
-    <button id=btn>Button</button>-->
-
-    <div id=response style="margin-top: 2vh;"></div>
+    <div id="response" style="margin-top: 2vh;"></div>
 
 </body>
-
-<script>
-
-    jQuery.ajaxSetup({
-        beforeSend: function () {
-            $('#loader').show();
-        },
-        complete: function () {
-            $('#loader').hide();
-        },
-        success: function () { }
-    });
-
-</script>
 
 <script>
 
@@ -134,14 +113,32 @@
                 },
                 success: function (res) {
 
+                    var show_query = '';
+
+                    if(res[0][0] == res[0][1])
+                    {
+                        show_query = "<i><h2 class='show-query'>showing results for '"+res[0][0]+"'</h2></i>";
+                    }
+                    else
+                    {
+                        show_query = "<i><h2 class='show-query'>showing results for '"+res[0][0]+"', instead of '"+res[0][1]+"'</h2></i>";
+                    }
 
                     len = res.length;
 
                     var output = '';
 
-                    for (i = 0; i < len; i++) {
-                        output += "<div class='card'><h2>"+res[i][0]+"</h2><div class='container'><h4><b>"+res[i][2]+"</b></h4><div style='display:flex; width:100%'><div style='text-align:left; width:50%;'><a href="+res[i][1]+">Go to the news</a></div><div style='text-align:right; width:50%;'><a>"+res[i][3]+"</a></div></div></div></div><br>";
+                    if(len<2)
+                    {
+                        output = "<div style='justify-content:center; align-items:center; height:6vh; display:flex;'><h2 class='show_query'>No results found. Try another keywords.</h2></div>";
                     }
+                    else
+                    {
+                        for (i = 1; i < len; i++) {
+                            output += "<div class='card'><h2 class='title'>"+res[i][0]+"</h2><div class='container'><p class='description'>"+res[i][2]+"</p><div style='display:flex; width:100%'><div style='text-align:left; width:50%;'><a class='news_link' href="+res[i][1]+">Go to the news</a></div><div style='text-align:right; width:50%;'><a class='date'>"+res[i][3]+"</a></div></div></div></div><br>";
+                        }
+                    }
+                    $("#show-query").html(show_query);
 
                     $("#response").html(output);
 
