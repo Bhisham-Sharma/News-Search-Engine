@@ -79,40 +79,65 @@ def linearMergePosition(query, index_dict):
     else:
         cleaned_query = preprocess_words(query)
     
+    query_split = cleaned_query.split(" ")
+
     index_of_words = []
-    for word in cleaned_query.split(" "):
+    for word in query_split:
         if word in index_dict:
             index_of_words.append(index_dict.get(word))
         else:
             pass
-    
-    first_index = []
-    for i in range(0,len(cleaned_query.split(" "))):
-        try:
-            first_index.append(index_of_words[i][0][0])
-        except:
-            pass
 
-    min_index = first_index.index(min(first_index))
-    index_of_words[min_index], index_of_words[0] = index_of_words[0], index_of_words[min_index]
+    if len(index_of_words) != 0:
+        first_index = []
+        for i in range(0,len(index_of_words)):
+            first_index.append(index_of_words[i][0][0])
     
-    found_docs = set()
-    all_docs = set()
-    for i in range(0,len(index_of_words)):
-        for j in range(0,len(index_of_words[i])):
-            compare = index_of_words[i][j][0]
-            all_docs.add(compare)
-            
-            for k in range(i+1,len(index_of_words)):
-                for m in range(0,len(index_of_words[k])):
-                    if compare == index_of_words[k][m][0]:
-                        if index_of_words[i][j][1] - index_of_words[k][m][1] <= 5:
-                            found_docs.add(index_of_words[i][j][0])
-    
-    if len(found_docs) == 0:
-        return all_docs
+    if len(first_index) == 0 or len(index_of_words) == 0:
+        return None
     else:
-        return found_docs
+        min_index = first_index.index(min(first_index))
+        index_of_words[min_index], index_of_words[0] = index_of_words[0], index_of_words[min_index]
+
+        found_docs = set()
+        temp_index_of_words = index_of_words
+        if len(index_of_words) > 10:
+            index_of_words = index_of_words[:10]
+
+        for i in range(0,len(index_of_words)):
+            for j in range(0,len(index_of_words[i])):
+                compare = index_of_words[i][j][0]
+            
+                for k in range(i+1,len(index_of_words)):
+                    for m in range(0,len(index_of_words[k])):
+                        if compare == index_of_words[k][m][0]:
+                            if index_of_words[i][j][1] - index_of_words[k][m][1] <= 5:
+                                found_docs.add(index_of_words[i][j][0])
+        if len(found_docs)!=0:
+            return found_docs
+        else:
+            found_docs = set()
+            all_docs = set()
+            index_of_words = temp_index_of_words
+
+            print(index_of_words)
+
+            for i in range(0,len(index_of_words)):
+                for j in range(0,len(index_of_words[i])):
+                    compare = index_of_words[i][j][0]
+                    all_docs.add(compare)
+            
+                    for k in range(i+1,len(index_of_words)):
+                        for m in range(0,len(index_of_words[k])):
+                            if compare == index_of_words[k][m][0]:
+                                if index_of_words[i][j][1] - index_of_words[k][m][1] <= 5:
+                                    found_docs.add(index_of_words[i][j][0])
+            if len(found_docs) == 0:
+                return all_docs
+            else:
+                return found_docs
+
+
 
 
 # spell checker
